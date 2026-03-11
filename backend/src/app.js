@@ -27,7 +27,17 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use(morgan("dev"));
-app.use(cors());
+
+
+app.use(cors({
+  origin: [
+    "https://star-radiology-portal.vercel.app",
+    "http://localhost:5000"
+  ],
+  credentials: true
+}));
+
+
 app.use(express.json());
 
 mongoose

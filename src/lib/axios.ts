@@ -1,11 +1,11 @@
 import axios from 'axios';
 import { toast } from 'sonner';
 
-const API_BASE =
-  import.meta.env.VITE_API_URL || 'http://localhost:5000/api/website';
+// Agar env variable hai to use karo, warna local proxy
+const API_BASE = import.meta.env.VITE_API_URL || '';
 
 const api = axios.create({
-  baseURL: API_BASE,
+  baseURL: API_BASE + '/api/website',
 });
 
 api.interceptors.request.use(
@@ -20,14 +20,11 @@ api.interceptors.request.use(
 );
 
 export const adminApi = axios.create({
-  baseURL:
-    (import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api/admin',
+  baseURL: API_BASE + '/api/admin',
 });
 
-
 export const staffApi = axios.create({
-  baseURL:
-    (import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api/staff',
+  baseURL: API_BASE + '/api/staff',
 });
 
 adminApi.interceptors.request.use(

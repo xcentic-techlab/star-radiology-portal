@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import Admin from "../models/Admin.js";
 
 dotenv.config();
+
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
@@ -18,12 +19,12 @@ const seedAdmin = async () => {
   try {
     await connectDB();
 
-    const email = "admin@xstar.com";
-    const password = "Admin@123";
+    const email = process.env.ADMIN_EMAIL;
+    const password = process.env.ADMIN_PASSWORD;
 
     const exists = await Admin.findOne({ email });
     if (exists) {
-      console.log("⚠️ Admin already exists");
+      console.log("Admin already exists");
       process.exit(0);
     }
 
@@ -33,7 +34,7 @@ const seedAdmin = async () => {
       name: "Super Admin",
       email,
       password: hashedPassword,
-      role: "superadmin", 
+      role: "superadmin",
     });
 
     console.log("Admin created successfully");
