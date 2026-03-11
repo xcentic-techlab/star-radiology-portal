@@ -457,7 +457,7 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({
 
                 <div className="bim-tpl">
                   <div className="bim-tpl-txt">
-                    📋 Required columns: <strong>{config.fields.filter(f => f.required).map(f => f.key).join(', ')}</strong>
+                    Required columns: <strong>{config.fields.filter(f => f.required).map(f => f.key).join(', ')}</strong>
                     {' '}— download template to get started.
                   </div>
                   <button className="bim-tpl-btn" onClick={() => downloadTemplate(config)}>
