@@ -125,7 +125,7 @@ const AdminReports: React.FC = () => {
 <IconBtn onClick={() => {
   const url = r.reportFile?.url;
   if (!url) return toast.error('No file found');
-  const fullUrl = url.startsWith('http') ? url : `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${url}`;
+  const fullUrl = url.startsWith('http') ? url : `${import.meta.env.VITE_API_URL || 'http://178.16.139.140:5000'}${url}`;
   window.open(fullUrl, '_blank');
 }} title="Download">
   <Download size={13} />

@@ -27,7 +27,7 @@ const PAGE_KEYS: Record<string, { label: string; description: string; keys: { ke
   },
 };
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://192.168.1.41:5000';
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://178.16.139.140:5000';
 const fullUrl = (p?: string | null): string => {
   if (!p) return '';
   const trimmed = p.trim();

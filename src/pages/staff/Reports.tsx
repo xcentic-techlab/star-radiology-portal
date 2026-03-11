@@ -90,7 +90,7 @@ const StaffReports: React.FC = () => {
     if (!url) return;
     const fullUrl = url.startsWith('http') 
       ? url 
-      : `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${url}`;
+      : `${import.meta.env.VITE_API_URL || 'http://178.16.139.140:5000'}${url}`;
     window.open(fullUrl, '_blank');
   }} title="Download" style={{
     width:32,height:32,borderRadius:8,border:'1px solid #e2e8f0',background:'#fff',

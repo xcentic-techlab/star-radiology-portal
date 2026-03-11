@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { toast } from 'sonner';
 
-// Agar env variable hai to use karo, warna local proxy
-const API_BASE = import.meta.env.VITE_API_URL || '';
+
+const API_BASE = import.meta.env.VITE_API_URL || 'http://178.16.139.140:5000';
 
 const api = axios.create({
   baseURL: API_BASE + '/api/website',
