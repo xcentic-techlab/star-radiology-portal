@@ -40,94 +40,46 @@ console.log("LOADED OTP FN:", generateOtp());
 
 
 async function handleOtpSend(mobile, userData = {}) {
-  let user = await User.findOne({ mobile });
-  if (!user && userData.createNew) {
-    user = await User.create({
-      mobile,
-      fullName: userData.fullName,
-      email: userData.email,
-    });
-  } else if (!user && !userData.createNew) {
-    throw new Error("User not found. Please sign up first.");
-  }
-
   const otpCode = generateOtp();
   const expiryMin = parseInt(process.env.OTP_EXPIRY_MIN || "5", 10);
   const expiresAt = new Date(Date.now() + expiryMin * 60 * 1000);
 
   await Otp.findOneAndUpdate(
     { mobile },
-    { otp: otpCode, expiresAt },
+    { 
+      otp: otpCode, 
+      expiresAt,
+      fullName: userData.fullName,
+      email: userData.email,
+    },
     { upsert: true, new: true }
   );
 
   console.log("OTP Saved for:", mobile, "OTP:", otpCode);
-
-
   await sendOtp(mobile, otpCode);
   return expiresAt;
 }
-
 
 router.post("/signup", async (req, res) => {
   try {
     const { fullName, mobile, email } = req.body;
 
-    if (!mobile) {
-      return res.status(400).json({ ok: false, msg: "Mobile is required" });
-    }
+    if (!mobile) return res.status(400).json({ ok: false, msg: "Mobile is required" });
+    if (!email) return res.status(400).json({ ok: false, msg: "Email is required" });
 
-    if (!email) {
-      return res.status(400).json({ ok: false, msg: "Email is required" });
-    }
     const emailExists = await User.findOne({ email });
-    if (emailExists) {
-      return res.status(200).json({
-        ok: false,
-        msg: "Email already registered. Please sign in.",
-      });
-    }
+    if (emailExists) return res.status(200).json({ ok: false, msg: "Email already registered. Please sign in." });
+
     const mobileExists = await User.findOne({ mobile });
-    if (mobileExists) {
-      return res.status(200).json({
-        ok: false,
-        msg: "Mobile number already registered. Please sign in.",
-      });
-    }
+    if (mobileExists) return res.status(200).json({ ok: false, msg: "Mobile already registered. Please sign in." });
 
-    const expiresAt = await handleOtpSend(mobile, {
-      fullName,
-      email,
-      createNew: true,
-    });
+    const expiresAt = await handleOtpSend(mobile, { fullName, email });
 
-    return res.json({
-      ok: true,
-      msg: "OTP sent (mock)",
-      expiresAt,
-    });
+    return res.json({ ok: true, msg: "OTP sent", expiresAt });
 
   } catch (err) {
     console.error(err);
-    if (err.code === 11000) {
-      if (err.keyPattern?.email) {
-        return res.status(200).json({
-          ok: false,
-          msg: "Email already registered. Please sign in.",
-        });
-      }
-      if (err.keyPattern?.mobile) {
-        return res.status(200).json({
-          ok: false,
-          msg: "Mobile number already registered. Please sign in.",
-        });
-      }
-    }
-
-    return res.status(500).json({
-      ok: false,
-      msg: "Something went wrong. Please try again.",
-    });
+    return res.status(500).json({ ok: false, msg: "Something went wrong." });
   }
 });
 
@@ -172,27 +124,27 @@ router.post("/signin", async (req, res) => {
 router.post("/verify", async (req, res) => {
   try {
     const { mobile, otp } = req.body;
-    if (!mobile || !otp)
-      return res.status(400).json({ error: "mobile & otp required" });
+    if (!mobile || !otp) return res.status(400).json({ error: "mobile & otp required" });
 
     const record = await Otp.findOne({ mobile });
-    if (!record)
-      return res.status(400).json({ error: "No OTP requested for this number" });
-
-    if (new Date() > record.expiresAt)
-      return res.status(400).json({ error: "OTP expired" });
-
-    if (record.otp !== otp)
-      return res.status(400).json({ error: "Invalid OTP" });
+    if (!record) return res.status(400).json({ error: "No OTP requested" });
+    if (new Date() > record.expiresAt) return res.status(400).json({ error: "OTP expired" });
+    if (record.otp !== otp) return res.status(400).json({ error: "Invalid OTP" });
 
     let user = await User.findOne({ mobile });
-    if (!user)
-      return res.status(400).json({ error: "User not found. Please sign up first." });
+    if (!user) {
+      if (!record.fullName) return res.status(400).json({ error: "User not found. Please sign up first." });
+      
+      user = await User.create({
+        mobile,
+        fullName: record.fullName,
+        email: record.email,
+      });
+    }
 
     const patient = await Patient.findOne({ "contact.phone": mobile });
+    const role = patient ? "patient" : "user";
 
-
-    let role = patient ? "patient" : "user";
     const token = jwt.sign(
       { id: user._id, mobile: user.mobile, role },
       process.env.JWT_SECRET,
@@ -201,13 +153,7 @@ router.post("/verify", async (req, res) => {
 
     await Otp.deleteOne({ mobile });
 
-    return res.json({
-      ok: true,
-      token,
-      role,
-      user,
-      isPatient: !!patient,
-    });
+    return res.json({ ok: true, token, role, user, isPatient: !!patient });
 
   } catch (err) {
     console.error("VERIFY ERROR:", err);

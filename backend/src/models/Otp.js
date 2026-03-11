@@ -6,6 +6,8 @@ const otpSchema = new Schema({
   mobile: { type: String, required: true, index: true },
   otp: { type: String, required: true },
   expiresAt: { type: Date, required: true },
+  fullName: { type: String, default: null }, 
+  email: { type: String, default: null },    
 });
 
 otpSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
