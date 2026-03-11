@@ -19,6 +19,8 @@ import StaffAppointments from "./pages/staff/Appointments";
 import ReportUpload from "./pages/staff/ReportUpload";
 import StaffReports from "./pages/staff/Reports";
 import NotFound from "./pages/NotFound";
+import ImageManager from "./pages/admin/Imagemanager";
+import ScheduleManagement from "./pages/admin/Schedulemanagement";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -38,8 +40,6 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Login />} />
-
-            {/* Admin Routes */}
             <Route element={<ProtectedRoute allowedRoles={['admin']}><AppLayout /></ProtectedRoute>}>
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin/centers" element={<AdminCenters />} />
@@ -48,14 +48,15 @@ const App = () => (
               <Route path="/admin/staff" element={<AdminStaff />} />
               <Route path="/admin/appointments" element={<AdminAppointments />} />
               <Route path="/admin/reports" element={<AdminReports />} />
+              <Route path="/admin/images" element={<ImageManager />} />
+              <Route path="/admin/schedule" element={<ScheduleManagement />} />
             </Route>
-
-            {/* Staff Routes */}
-            <Route element={<ProtectedRoute allowedRoles={['center_staff', 'center_admin']}><AppLayout /></ProtectedRoute>}>
+            <Route element={<ProtectedRoute allowedRoles={['staff', 'admin']}><AppLayout /></ProtectedRoute>}>
               <Route path="/staff/dashboard" element={<StaffDashboard />} />
               <Route path="/staff/appointments" element={<StaffAppointments />} />
               <Route path="/staff/reports/upload" element={<ReportUpload />} />
               <Route path="/staff/reports" element={<StaffReports />} />
+
             </Route>
 
             <Route path="*" element={<NotFound />} />

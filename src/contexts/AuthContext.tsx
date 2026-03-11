@@ -1,6 +1,15 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { jwtDecode } from 'jwt-decode';
-import type { AuthUser } from '@/types';
+
+
+export interface AuthUser {
+  id: string;
+  role: string;
+  name: string;
+  email: string;
+  centerId?: string;
+  centerName?: string;
+}
 
 interface AuthContextType {
   user: AuthUser | null;
@@ -13,8 +22,8 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+  const [user, setUser]         = useState<AuthUser | null>(null);
+  const [token, setToken]       = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const decodeAndSetUser = useCallback((t: string) => {
@@ -24,7 +33,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.removeItem('dcms_token');
         return false;
       }
-      setUser({ id: decoded.id, role: decoded.role, name: decoded.name, centerId: decoded.centerId, centerName: decoded.centerName });
+
+      setUser({
+        id:          decoded.id,
+        role:        decoded.role,
+        name:        decoded.name        || '',
+        email:       decoded.email       || '',   
+        centerId:    decoded.centerId,
+        centerName:  decoded.centerName,
+      });
+
       setToken(t);
       return true;
     } catch {
@@ -35,9 +53,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     const stored = localStorage.getItem('dcms_token');
-    if (stored) {
-      decodeAndSetUser(stored);
-    }
+    if (stored) decodeAndSetUser(stored);
     setIsLoading(false);
   }, [decodeAndSetUser]);
 

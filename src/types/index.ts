@@ -35,18 +35,43 @@ export interface CenterStaff {
 
 export interface Appointment {
   _id: string;
-  patientId: {
-    name: string;
-    phone: string;
+  user?: {
+    _id: string;
+    name?: string;
+    phone?: string;
+    email?: string;
   };
-  centerId: Center;
-  procedureId: Procedure;
-  appointmentDate: string;
-  appointmentTime: string;
-  paymentStatus: 'pending' | 'confirmed' | 'failed';
-  reportStatus: 'not_uploaded' | 'uploaded' | 'completed';
-  status: string;
-  note?: string;
+
+  center?: {
+    _id: string;
+    centerName: string;
+  };
+
+  procedure?: {
+    _id: string;
+    name: string;
+  };
+  fullName: string;
+  mobile: string;
+  email?: string;
+  doctor?: string;
+
+  date: string;
+  time: string;
+
+  paymentMethod: 'Pay Now' | 'Pay at Center';
+  paymentStatus: 'Pending' | 'Completed' | 'Failed';
+  status:
+    | 'Pending'
+    | 'Lab Processing'
+    | 'Doctor Review'
+    | 'Completed'
+    | 'Report Ready'
+    | 'Cancelled';
+
+  statusNote?: string;
+  amount?: number;
+  createdAt: string;
 }
 
 export interface Report {
