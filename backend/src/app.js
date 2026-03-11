@@ -67,6 +67,7 @@ app.use('/api', notificationRoutes);
 app.use('/api', userRoutes);
 app.use("/mobile/invoices", invoicesRouter);
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+app.use('/api/uploads', express.static(path.join(process.cwd(), 'uploads')));
 app.use("/api/admin/appointments", adminAppointments);
 app.use('/staff/appointments', staffAppointmentRoutes);
 app.use("/api/admin/dashboard", adminDashboard);
@@ -74,7 +75,7 @@ app.use("/api/admin/dashboard", adminDashboard);
 
 app.use('/api/schedule', scheduleRoutes);
 
-app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
+// app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 app.use((req, res) => {
   res.status(404).json({ error: "Route not found" });
 });
