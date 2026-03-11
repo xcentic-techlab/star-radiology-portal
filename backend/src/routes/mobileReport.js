@@ -39,7 +39,7 @@ router.get("/", protectMobileUser, async (req, res) => {
         ...r.reportFile,
         url: r.reportFile?.url?.startsWith('http')
           ? r.reportFile.url
-          : `http://192.168.1.41:5000${r.reportFile?.url}`,
+          : `http://178.16.139.140:5000${r.reportFile?.url}`,
       },
 
       appointmentDate: r.appointment?.date,
