@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 const API_BASE = import.meta.env.VITE_API_URL || 'http://178.16.139.140:5000';
 
 const api = axios.create({
-  baseURL: API_BASE + '/api/website',
+  baseURL: API_BASE + '/website',
 });
 
 api.interceptors.request.use(
@@ -20,11 +20,11 @@ api.interceptors.request.use(
 );
 
 export const adminApi = axios.create({
-  baseURL: API_BASE + '/api/admin',
+  baseURL: API_BASE + '/admin',
 });
 
 export const staffApi = axios.create({
-  baseURL: API_BASE + '/api/staff',
+  baseURL: API_BASE + '/staff',
 });
 
 adminApi.interceptors.request.use(
